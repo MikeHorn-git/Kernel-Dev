@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build your kernel before
+# Build your kernel before running this script
 
 set -e
 
@@ -15,39 +15,65 @@ DISK_SIZE="450M"
 ROOTFS_DIR="/tmp/my-rootfs"
 LOOP_DEVICE=""
 
-echo "Creating disk image..."
-truncate -s $DISK_SIZE $DISK_IMG
+# Check if disk image exists
+if [ ! -f "$DISK_IMG" ]; then
+    echo "Creating disk image..."
+    truncate -s $DISK_SIZE $DISK_IMG
 
-echo "Creating partition table..."
-/sbin/parted -s $DISK_IMG mktable msdos
-/sbin/parted -s $DISK_IMG mkpart primary ext4 1 "100%"
-/sbin/parted -s $DISK_IMG set 1 boot on
+    echo "Creating partition table..."
+    /sbin/parted -s $DISK_IMG mktable msdos
+    /sbin/parted -s $DISK_IMG mkpart primary ext4 1 "100%"
+    /sbin/parted -s $DISK_IMG set 1 boot on
+else
+    echo "Disk image '$DISK_IMG' already exists. Skipping disk creation steps."
+fi
 
-echo "Setting up loop device..."
-sudo losetup -Pf $DISK_IMG
+# Set up loop device if not already set
 LOOP_DEVICE=$(losetup -l | grep $DISK_IMG | awk '{print $1}')
+if [ -z "$LOOP_DEVICE" ]; then
+    echo "Setting up loop device..."
+    sudo losetup -Pf $DISK_IMG
+    LOOP_DEVICE=$(losetup -l | grep $DISK_IMG | awk '{print $1}')
+else
+    echo "Loop device already set up as $LOOP_DEVICE."
+fi
 
-echo "Formatting partition as ext4..."
-sudo mkfs.ext4 ${LOOP_DEVICE}p1
+# Check if partition is formatted
+if ! sudo blkid ${LOOP_DEVICE}p1 >/dev/null 2>&1; then
+    echo "Formatting partition as ext4..."
+    sudo mkfs.ext4 ${LOOP_DEVICE}p1
+else
+    echo "Partition '${LOOP_DEVICE}p1' is already formatted."
+fi
 
-echo "Mounting partition..."
-mkdir -p $ROOTFS_DIR
-sudo mount ${LOOP_DEVICE}p1 $ROOTFS_DIR
+# Mount partition if not already mounted
+if ! mountpoint -q $ROOTFS_DIR; then
+    echo "Mounting partition..."
+    mkdir -p $ROOTFS_DIR
+    sudo mount ${LOOP_DEVICE}p1 $ROOTFS_DIR
+else
+    echo "Partition already mounted at '$ROOTFS_DIR'."
+fi
 
-echo "Installing minimal Alpine Linux..."
-sudo docker run -it --rm -v $ROOTFS_DIR:/my-rootfs alpine sh -c '
-  apk add openrc util-linux build-base;
-  ln -s agetty /etc/init.d/agetty.ttyS0;
-  echo ttyS0 > /etc/securetty;
-  rc-update add agetty.ttyS0 default;
-  rc-update add root default;
-  echo "root:password" | chpasswd;
-  rc-update add devfs boot;
-  rc-update add procfs boot;
-  rc-update add sysfs boot;
-  for d in bin etc lib root sbin usr; do tar c "/$d" | tar x -C /my-rootfs; done;
-  for dir in dev proc run sys var; do mkdir /my-rootfs/${dir}; done;
-'
+# Check if root filesystem is populated
+if [ ! -d "$ROOTFS_DIR/bin" ]; then
+    echo "Installing minimal Alpine Linux..."
+    sudo docker run -it --rm -v $ROOTFS_DIR:/my-rootfs alpine sh -c '
+      apk add openrc util-linux build-base;
+      ln -s agetty /etc/init.d/agetty.ttyS0;
+      echo ttyS0 > /etc/securetty;
+      rc-update add agetty.ttyS0 default;
+      rc-update add root default;
+      echo "root:password" | chpasswd;
+      rc-update add devfs boot;
+      rc-update add procfs boot;
+      rc-update add sysfs boot;
+      for d in bin etc lib root sbin usr; do tar c "/$d" | tar x -C /my-rootfs; done;
+      for dir in dev proc run sys var; do mkdir /my-rootfs/${dir}; done;
+    '
+else
+    echo "Root filesystem already populated. Skipping Alpine Linux installation."
+fi
 
 echo "Installing GRUB and Kernel..."
 sudo mkdir -p $ROOTFS_DIR/boot/grub
