@@ -1,4 +1,5 @@
 config HELLO
     bool "Enable custom Hello syscall"
+    default y
     help
         print "Hello world"

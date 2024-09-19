@@ -1,6 +1,7 @@
 #include <linux/kernel.h>
 #include <linux/syscalls.h>
 
+int hello(void);
 int hello(void)
 {
     printk(KERN_INFO "Hello World USER\n");

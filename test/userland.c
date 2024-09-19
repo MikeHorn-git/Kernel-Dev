@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <sys/syscall.h>
 
-#define MY_SYSCALL_NUMBER 466 // depend of your syscall
+#define __NR_hello_world 466 // depend of your syscall
 
 int main()
 {
