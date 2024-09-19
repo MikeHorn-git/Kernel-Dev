@@ -3,3 +3,9 @@ config HELLO
     default y
     help
         print "Hello world"
+
+config SYS_UPTIME
+    bool "Enable uptime() syscall"
+    default y
+    help
+        print "uptime()"

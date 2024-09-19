@@ -1,4 +1,4 @@
-KERN_VERSION = linux-6.10.10
+KERN_VERSION = linux-6.11
 OBJ = hello.o
 
 obj-m := $(OBJ)

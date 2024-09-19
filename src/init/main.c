@@ -1,7 +1,20 @@
-int hello(void);
-// static int __ref kernel_init(void *unused) ~ Line 1462
-int link_hello(void);
+#ifdef CONFIG_HELLO
+extern int hello(void);
+#endif
 
-    #if defined(CONFIG_HELLO) 
-        ret = link_hello();
-    #endif
+#ifdef CONFIG_UPTIME
+extern unsigned long uptime_seconds;
+#endif
+
+//static int __ref kernel_init(void *unused)
+//{
+	//int ret;
+	unsigned long uptime;
+
+	    #if defined(CONFIG_HELLO) 
+		ret = hello();
+	    #endif
+	    #if defined(CONFIG_UPTIME) 
+		uptime = uptime_seconds;
+	    #endif
+
