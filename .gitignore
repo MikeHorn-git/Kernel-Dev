@@ -3,3 +3,11 @@ linux-*.*
 
 # Self explanatory
 disk.img
+
+# Kernel module objects
+src/module/.hello.mod.cmd
+src/module/.hello.o.cmd
+src/module/.modules.order.cmd
+src/module/hello.mod
+src/module/hello.o
+src/module/modules.order
