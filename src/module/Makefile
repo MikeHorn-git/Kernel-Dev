@@ -1,5 +1,8 @@
-obj-m := hello.o
+KERN_VERSION = linux-6.10.10
+OBJ = hello.o
+
+obj-m := $(OBJ)
 all:
-	make -C ../../linux-6.11 M=$(PWD) modules
+	make -C ../../$(KERN_VERSION) M=$(PWD) modules
 clean:
-	make -C ../../linux-6.11 M=$(PWD) clean
+	make -C ../../$(KERN_VERSION) M=$(PWD) clean

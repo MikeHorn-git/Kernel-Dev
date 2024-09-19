@@ -1,13 +1,13 @@
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/printk.h>
+#include <linux/init.h>
 
 void hello(void);
 void hello(void)
 {
     pr_info("Hello from myModuleHello\n");
 }
-EXPORT_SYMBOL(hello);
 
 static __init int hello_init(void)
 {
@@ -24,3 +24,5 @@ module_exit(hello_exit);
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Hello module");
+
+EXPORT_SYMBOL_GPL(hello);

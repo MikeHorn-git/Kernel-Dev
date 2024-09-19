@@ -1,3 +1,4 @@
+int hello(void);
 // static int __ref kernel_init(void *unused) ~ Line 1462
 int link_hello(void);
 
