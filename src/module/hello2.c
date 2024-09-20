@@ -8,8 +8,6 @@
 
 extern void hello(void);
 
-//static char *name = "Hello2";
-
 /* 
  * module_param(foo, int, 0000)
  * The first param is the parameters name
@@ -18,9 +16,13 @@ extern void hello(void);
  * for exposing parameters in sysfs (if non-zero) at a later stage.
  */
 
+static char *name = "KERNEL MODULE DEV";
+module_param(name, charp, 0644);
+MODULE_PARM_DESC(name, "A name parameter to customize the hello message");
+
 static int __init hello2_init(void)
 {
-    pr_info("Hello2 module: calling hello from Hello\n");
+    pr_info("Hello2 module: Custom parameter: %s\n", name);
     hello();
     return 0;
 }

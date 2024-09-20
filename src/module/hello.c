@@ -6,7 +6,7 @@
 void hello(void);
 void hello(void)
 {
-    pr_info("Hello from myModuleHello\n");
+    pr_info("Hello from hello exported symbols\n");
 }
 
 static __init int hello_init(void)
