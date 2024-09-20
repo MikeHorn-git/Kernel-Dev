@@ -5,16 +5,16 @@ linux-*.*
 disk.img
 
 # Kernel module objects
-.hello.mod.cmd
-.hello.o.cmd
+.*.mod.cmd
+.*.o.cmd
 .modules.order.cmd
-hello.mod
-hello.o
+*.mod
+*.o
 modules.order
 .Module.symvers.cmd
-.hello.ko.cmd
-.hello.mod.o.cmd
+.*.ko.cmd
+.*.mod.o.cmd
 Module.symvers
-hello.ko
-hello.mod.c
-hello.mod.o
+*.ko
+*.mod.c
+*.mod.o
