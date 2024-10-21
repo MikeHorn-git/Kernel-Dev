@@ -1,8 +1,9 @@
 # Kernel source
 linux-*.*
 
-# Self explanatory
+# Disk images
 disk.img
+disk.qcow2
 
 # Kernel module objects
 .*.mod.cmd
