@@ -56,7 +56,7 @@ share:
 		{ echo "Failed to start QEMU."; exit 1; }
 
 clean:
-	$(QUIET)rm -rf $(KERN_DIR) || echo "No kernel directory to clean."
-	$(QUIET)$(MAKE) -C $(MODULE_DIR) clean || echo "Module clean failed or no files to clean."
+	$(QUIET) sudo losetup -d /dev/loop0
+	$(QUIET) sudo rm -rf /tmp/my-rootfs ./disk.img
 
 .PHONY: help build convert deploy module share clean
