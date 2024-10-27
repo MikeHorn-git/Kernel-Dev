@@ -33,6 +33,7 @@ Vagrant.configure('2') do |config|
     vb.name = 'Kernel'
     vb.gui = false
     vb.check_guest_additions = false
+    vb.customize ['modifyvm', :id, '--clipboard', 'bidirectional']
   end
 
   config.vm.provision 'shell', inline: <<-SHELL, privileged: false
