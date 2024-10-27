@@ -7,6 +7,12 @@
 * Userland tests in src/test
 * LKM in module/
 
+# Requirements
+
+* [Getoptlong](https://github.com/ruby/getoptlong)
+* Vagrant
+* Virtualbox
+
 # Usage
 
 ```Makefile
@@ -74,3 +80,7 @@ src
 * Modified files from kernel source tree
 * Custom syscall created
 * Userland call in test/
+
+# To-Do
+
+- [ ] Add libvirt (Qemu) support in Vagrantfile
