@@ -33,20 +33,20 @@ Vagrant commands are wrapped by the Makefile.
 
 ## Build
 
-Execute ```bash vagrant --kernel up``` :
+Execute ```vagrant --kernel up``` :
 
 * Install Kernel utils
 * Build and install Kernel
 
 ## Deploy
 
-Execute ```bash vagrant up``` :
+Execute ```vagrant up``` :
 
 * Install Kernel utils
 
 ## Prune
 
-Execute ```bash vagrant destroy -f; vagrant global-status --prune```
+Execute ```vagrant destroy -f; vagrant global-status --prune```
 
 * Destroy the Kernel VM
 

@@ -9,7 +9,7 @@
 #include <linux/module.h>
 #include <linux/kprobes.h>
 
-static char symbol[KSYM_NAME_LEN] = "sys_call_table";
+static char symbol[KSYM_NAME_LEN] = "do_sys_open";
 module_param_string(symbol, symbol, KSYM_NAME_LEN, 0644);
 
 /* For each probe you need to allocate a kprobe structure */
@@ -64,4 +64,3 @@ module_init(kprobe_init)
 module_exit(kprobe_exit)
 MODULE_DESCRIPTION("Kprobe tests");
 MODULE_LICENSE("GPL");
-
