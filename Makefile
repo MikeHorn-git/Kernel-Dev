@@ -1,6 +1,5 @@
-QCOW2_IMG := kernel.qcow2
-DISK_IMG := disk.img
 OVA_FILE := kernel.ova
+QCOW2_IMG := kernel.qcow2
 VM_NAME := Kernel
 
 .DEFAULT_GOAL := help
@@ -9,10 +8,16 @@ help:
 	@echo "Usage: make <target>"
 	@echo "Targets:"
 	@echo "  help         Display this help message"
+	@echo "  build        Deploy VM and build kernel with defconfig"
 	@echo "  convert      Convert $(VM_NAME) VM to QCOW2 format"
-	@echo "  deploy       Deploy using Vagrant"
-	@echo "  clean        Clean up generated files"
+	@echo "  deploy       Deploy VM with utils"
+	@echo "  clean        Clean up VM images"
 	@echo "  prune        Destroy Vagrant VM"
+	@echo "  distclean    Execute clean and prune command"
+
+build:
+	@command -v vagrant >/dev/null 2>&1 || { echo "Vagrant is not installed."; exit 1; }
+	@vagrant --kernel up || { echo "Failed to deploy with Vagrant."; exit 1; }
 
 convert:
 	VBoxManage export $(VM_NAME) -o $(OVA_FILE) --ovf10
@@ -21,7 +26,7 @@ convert:
 
 deploy:
 	@command -v vagrant >/dev/null 2>&1 || { echo "Vagrant is not installed."; exit 1; }
-	vagrant --kernel up || { echo "Failed to deploy with Vagrant."; exit 1; }
+	@vagrant up || { echo "Failed to deploy with Vagrant."; exit 1; }
 
 clean:
 	rm -rf $(OVA_FILE) $(QCOW2_IMG) *.ovf *.vmdk
@@ -30,4 +35,6 @@ prune:
 	@vagrant destroy -f
 	@vagrant global-status --prune
 
-.PHONY: help convert deploy clean prune
+disctlean: clean prune
+
+.PHONY: help build convert deploy clean prune

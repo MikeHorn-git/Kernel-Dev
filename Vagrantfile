@@ -29,14 +29,16 @@ Vagrant.configure('2') do |config|
 
   config.vm.provider 'virtualbox' do |vb|
     vb.memory = '4096'
-    vb.cpus = 2
+    vb.cpus = 4
     vb.name = 'Kernel'
     vb.gui = false
     vb.check_guest_additions = false
   end
 
   config.vm.provision 'shell', inline: <<-SHELL, privileged: false
-    sudo apk add bison build-base flex libressl-dev linux-headers perl wget xz
+    sudo apk update
+    sudo apk upgrade
+    sudo apk add bison build-base elfutils-dev flex libressl-dev linux-headers perl wget xz
   SHELL
 
   if kernel
@@ -48,6 +50,12 @@ Vagrant.configure('2') do |config|
 
       make defconfig
       make
+      sudo make modules_install
+      sudo make install
+
+      sudo mkinitfs -o /boot/initramfs 6.11.0/
+      sudo sed -i -e 's|^  LINUX vmlinuz-virt|  LINUX vmlinuz|' -e 's|^  INITRD initramfs-virt|  INITRD initramfs|' /boot/extlinux.conf
+      sudo reboot
     SHELL
   end
 end
