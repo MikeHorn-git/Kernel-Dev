@@ -41,7 +41,9 @@ Vagrant.configure('2') do |config|
   config.vm.provision 'shell', inline: <<-SHELL, privileged: false
     sudo apk update
     sudo apk upgrade
-    sudo apk add bison build-base elfutils-dev flex libressl-dev linux-headers perl wget xz
+    sudo apk add bison build-base elfutils-dev flex libressl-dev linux-headers perl shadow wget xz zsh zsh-completions
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    sudo chsh -s $(which zsh) $(whoami)
   SHELL
 
   if kernel
