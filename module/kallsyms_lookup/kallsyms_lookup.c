@@ -9,23 +9,17 @@
 #include <linux/module.h>
 #include <linux/kprobes.h>
 
-static char symbol[KSYM_NAME_LEN] = "do_sys_open";
-module_param_string(symbol, symbol, KSYM_NAME_LEN, 0644);
-
 /* For each probe you need to allocate a kprobe structure */
 static struct kprobe kp = {
-	.symbol_name	= symbol,
+	.symbol_name	= "sys_call_table",
 };
 
 /* kprobe pre_handler: called just before the probed instruction is executed */
 static int __kprobes handler_pre(struct kprobe *p, struct pt_regs *regs)
 {
-#ifdef CONFIG_X86
 	pr_info("<%s> p->addr = 0x%p, ip = %lx, flags = 0x%lx\n",
 		p->symbol_name, p->addr, regs->ip, regs->flags);
-#endif
 
-	/* A dump_stack() here will give a stack backtrace */
 	return 0;
 }
 
@@ -33,34 +27,29 @@ static int __kprobes handler_pre(struct kprobe *p, struct pt_regs *regs)
 static void __kprobes handler_post(struct kprobe *p, struct pt_regs *regs,
 				unsigned long flags)
 {
-#ifdef CONFIG_X86
 	pr_info("<%s> p->addr = 0x%p, flags = 0x%lx\n",
 		p->symbol_name, p->addr, regs->flags);
-#endif
 }
 
-static int __init kprobe_init(void)
+static int __init kallsyms_init(void)
 {
-	int ret;
 	kp.pre_handler = handler_pre;
 	kp.post_handler = handler_post;
 
-	ret = register_kprobe(&kp);
-	if (ret < 0) {
-		pr_err("register_kprobe failed, returned %d\n", ret);
-		return ret;
-	}
-	pr_info("Planted kprobe at %p\n", kp.addr);
+	register_kprobe(&kp);
+	pr_info("sys_call_table: %px\n", kp.addr);
 	return 0;
 }
 
-static void __exit kprobe_exit(void)
+static void __exit kallsyms_exit(void)
 {
 	unregister_kprobe(&kp);
-	pr_info("kprobe at %p unregistered\n", kp.addr);
+	pr_info("kallsyms_lookup exit successfully");
+
 }
 
-module_init(kprobe_init)
-module_exit(kprobe_exit)
-MODULE_DESCRIPTION("Kprobe tests");
+module_init(kallsyms_init)
+module_exit(kallsyms_exit)
+MODULE_AUTHOR("MikeHorn-git");
+MODULE_DESCRIPTION("kallsyms_lookup_name");
 MODULE_LICENSE("GPL");
