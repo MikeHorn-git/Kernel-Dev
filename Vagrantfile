@@ -39,9 +39,11 @@ Vagrant.configure('2') do |config|
   end
 
   config.vm.provision 'shell', inline: <<-SHELL, privileged: false
+    # Upgrade Alpine from 3.18 to 3.20
+    sudo sed -i -e 's/v3\.18/v3\.20/g' /etc/apk/repositories
     sudo apk update
     sudo apk upgrade
-    sudo apk add bison build-base elfutils-dev flex libressl-dev linux-headers perl shadow wget xz zsh zsh-completions
+    sudo apk add bison build-base elfutils-dev flex libressl-dev linux-headers perl shadow strace wget xz zsh zsh-completions
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     sudo chsh -s $(which zsh) $(whoami)
   SHELL
@@ -59,6 +61,7 @@ Vagrant.configure('2') do |config|
       sudo make install
 
       sudo mkinitfs -o /boot/initramfs 6.11.0/
+      # Update bootloader
       sudo sed -i -e 's|^  LINUX vmlinuz-virt|  LINUX vmlinuz|' -e 's|^  INITRD initramfs-virt|  INITRD initramfs|' /boot/extlinux.conf
       sudo reboot
     SHELL
