@@ -14,42 +14,24 @@ static struct kprobe kp = {
 	.symbol_name	= "sys_call_table",
 };
 
-/* kprobe pre_handler: called just before the probed instruction is executed */
-static int __kprobes handler_pre(struct kprobe *p, struct pt_regs *regs)
+static int __init kallsyms_lookup_init(void)
 {
-	pr_info("<%s> p->addr = 0x%p, ip = %lx, flags = 0x%lx\n",
-		p->symbol_name, p->addr, regs->ip, regs->flags);
-
-	return 0;
-}
-
-/* kprobe post_handler: called after the probed instruction is executed */
-static void __kprobes handler_post(struct kprobe *p, struct pt_regs *regs,
-				unsigned long flags)
-{
-	pr_info("<%s> p->addr = 0x%p, flags = 0x%lx\n",
-		p->symbol_name, p->addr, regs->flags);
-}
-
-static int __init kallsyms_init(void)
-{
-	kp.pre_handler = handler_pre;
-	kp.post_handler = handler_post;
-
 	register_kprobe(&kp);
 	pr_info("sys_call_table: %px\n", kp.addr);
 	return 0;
 }
 
-static void __exit kallsyms_exit(void)
+static void __exit kallsyms_lookup_exit(void)
 {
-	unregister_kprobe(&kp);
-	pr_info("kallsyms_lookup exit successfully");
+    pr_info("Unregistering kprobe for sys_call_table\n");
 
+    unregister_kprobe(&kp);
+
+    pr_info("kallsyms_lookup exit successfully\n");
 }
 
-module_init(kallsyms_init)
-module_exit(kallsyms_exit)
+module_init(kallsyms_lookup_init)
+module_exit(kallsyms_lookup_exit)
 MODULE_AUTHOR("MikeHorn-git");
 MODULE_DESCRIPTION("kallsyms_lookup_name");
 MODULE_LICENSE("GPL");
