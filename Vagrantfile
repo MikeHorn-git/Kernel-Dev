@@ -43,9 +43,8 @@ Vagrant.configure('2') do |config|
     sudo sed -i -e 's/v3\.18/v3\.20/g' /etc/apk/repositories
     sudo apk update
     sudo apk upgrade
-    sudo apk add bison build-base elfutils-dev flex libressl-dev linux-headers perl shadow strace wget xz zsh zsh-completions
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    sudo chsh -s $(which zsh) $(whoami)
+    sudo apk add bison build-base elfutils-dev flex git htop libressl-dev linux-headers neofetch perl strace wget xz
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
   SHELL
 
   if kernel
