@@ -47,7 +47,7 @@ Vagrant.configure('2') do |config|
 
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
     # Set CTRL+L to clear
-    echo "bind -x '"\C-l":clear'" >> .bashrc
+    echo 'bind -x '"'"'"\C-l":clear'"'"'' >> ~/.bashrc
   SHELL
 
   if kernel
