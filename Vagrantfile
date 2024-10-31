@@ -50,7 +50,7 @@ Vagrant.configure('2') do |config|
     # Set CTRL+L to clear
     echo 'bind -x '"'"'"\C-l":clear'"'"'' >> ~/.bashrc
     # Avoid 'xterm-kitty': unknown terminal type
-    echo "TERM=xterm-256color" >> .bashrc
+    echo "TERM=xterm-256color" >> ~/.bashrc
   SHELL
 
   if kernel
