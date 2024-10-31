@@ -27,29 +27,6 @@ Targets:
   distclean    Execute clean and prune command
 ```
 
-# Vagrant
-
-Vagrant commands are wrapped by the Makefile.
-
-## Build
-
-Execute ```vagrant --kernel up``` :
-
-* Install Kernel utils
-* Build and install Kernel
-
-## Deploy
-
-Execute ```vagrant up``` :
-
-* Install Kernel utils
-
-## Prune
-
-Execute ```vagrant destroy -f; vagrant global-status --prune```
-
-* Destroy the Kernel VM
-
 # Module
 
 TBD
@@ -80,6 +57,16 @@ src
 * Modified files from kernel source tree
 * Custom syscall created
 * Userland call in test/
+
+# Tips and tricks
+
+## Vagrant ssh
+
+Check this [doc](https://developer.hashicorp.com/vagrant/docs/cli/ss)
+
+## Vagrant scp
+
+Check this [github](https://github.com/invernizzi/vagrant-scp)
 
 # To-Do
 

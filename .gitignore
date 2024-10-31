@@ -2,8 +2,8 @@
 linux-*.*
 
 # Disk images
-disk.img
-disk.qcow2
+kernel.ov
+kernel.qcow2
 
 # Vagrant
 .vagrant
