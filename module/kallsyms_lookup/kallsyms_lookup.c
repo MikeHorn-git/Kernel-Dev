@@ -24,9 +24,7 @@ static int __init kallsyms_lookup_init(void)
 static void __exit kallsyms_lookup_exit(void)
 {
     pr_info("Unregistering kprobe for sys_call_table\n");
-
     unregister_kprobe(&kp);
-
     pr_info("kallsyms_lookup exit successfully\n");
 }
 

