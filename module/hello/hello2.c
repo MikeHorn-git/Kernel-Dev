@@ -8,11 +8,11 @@
 
 extern void hello(void);
 
-/* 
+/*
  * module_param(foo, int, 0000)
  * The first param is the parameters name
  * The second param is it's data type
- * The final argument is the permissions bits, 
+ * The final argument is the permissions bits,
  * for exposing parameters in sysfs (if non-zero) at a later stage.
  */
 
