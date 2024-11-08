@@ -11,7 +11,7 @@
 
 /* For each probe you need to allocate a kprobe structure */
 static struct kprobe kp = {
-	.symbol_name	= "sys_call_table",
+	.symbol_name = "sys_call_table",
 };
 
 static int __init kallsyms_lookup_init(void)
@@ -23,13 +23,12 @@ static int __init kallsyms_lookup_init(void)
 
 static void __exit kallsyms_lookup_exit(void)
 {
-    pr_info("Unregistering kprobe for sys_call_table\n");
-    unregister_kprobe(&kp);
-    pr_info("kallsyms_lookup exit successfully\n");
+	pr_info("Unregistering kprobe for sys_call_table\n");
+	unregister_kprobe(&kp);
+	pr_info("kallsyms_lookup exit successfully\n");
 }
 
-module_init(kallsyms_lookup_init)
-module_exit(kallsyms_lookup_exit)
-MODULE_AUTHOR("MikeHorn-git");
+module_init(kallsyms_lookup_init) module_exit(kallsyms_lookup_exit)
+	MODULE_AUTHOR("MikeHorn-git");
 MODULE_DESCRIPTION("kallsyms_lookup_name");
 MODULE_LICENSE("GPL");

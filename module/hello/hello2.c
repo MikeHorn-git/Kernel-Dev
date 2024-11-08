@@ -22,14 +22,14 @@ MODULE_PARM_DESC(name, "A name parameter to customize the hello message");
 
 static int __init hello2_init(void)
 {
-    pr_info("Hello2 module: Custom parameter: %s\n", name);
-    hello();
-    return 0;
+	pr_info("Hello2 module: Custom parameter: %s\n", name);
+	hello();
+	return 0;
 }
 
 static void __exit hello2_exit(void)
 {
-    pr_info("Hello2 module: exiting\n");
+	pr_info("Hello2 module: exiting\n");
 }
 
 module_init(hello2_init);

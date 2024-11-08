@@ -12,5 +12,5 @@ clean:
 	@sudo depmod
 
 modprobe:
-	@sudo cp kprobe.ko /lib/modules/$(KERN_VERSION)/lkm_hide.ko
+	@sudo cp lkm_hide.ko /lib/modules/$(KERN_VERSION)/lkm_hide.ko
 	@sudo depmod

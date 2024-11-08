@@ -12,5 +12,5 @@ clean:
 	@sudo depmod
 
 modprobe:
-	@sudo cp kprobe.ko /lib/modules/$(KERN_VERSION)/kallsyms_lookup.ko
+	@sudo cp kallsyms_lookup.ko /lib/modules/$(KERN_VERSION)/kallsyms_lookup.ko
 	@sudo depmod

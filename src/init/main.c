@@ -8,13 +8,12 @@ extern unsigned long uptime_seconds;
 
 //static int __ref kernel_init(void *unused)
 //{
-	//int ret;
-	unsigned long uptime;
+//int ret;
+unsigned long uptime;
 
-	    #if defined(CONFIG_HELLO) 
-		ret = hello();
-	    #endif
-	    #if defined(CONFIG_UPTIME) 
-		uptime = uptime_seconds;
-	    #endif
-
+#if defined(CONFIG_HELLO)
+ret = hello();
+#endif
+#if defined(CONFIG_UPTIME)
+uptime = uptime_seconds;
+#endif

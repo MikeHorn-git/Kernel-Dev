@@ -46,6 +46,11 @@ Vagrant.configure('2') do |config|
     sudo apk add bison build-base elfutils-dev flex git htop libressl-dev linux-headers neofetch perl strace wget xz
 
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+
+    # Add & enable rsyslog for kernel logs
+    sudo service rsyslog start
+    sudo rc-update add rsyslog default
+
     ## Bashrc tweaks ##
     # Set CTRL+L to clear
     echo 'bind -x '"'"'"\C-l":clear'"'"'' >> ~/.bashrc

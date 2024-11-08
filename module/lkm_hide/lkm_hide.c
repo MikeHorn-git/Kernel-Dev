@@ -12,8 +12,8 @@ void hide(void);
 
 void hide(void)
 {
-	 prev_module = THIS_MODULE->list.prev;
-    	 list_del(&THIS_MODULE->list);
+	prev_module = THIS_MODULE->list.prev;
+	list_del(&THIS_MODULE->list);
 }
 
 static int __init lkm_hide_init(void)
@@ -25,11 +25,10 @@ static int __init lkm_hide_init(void)
 
 static void __exit lkm_hide_exit(void)
 {
-    pr_info("lkm_hide exit successfully\n");
+	pr_info("lkm_hide exit successfully\n");
 }
 
-module_init(lkm_hide_init)
-module_exit(lkm_hide_exit)
-MODULE_AUTHOR("MikeHorn-git");
+module_init(lkm_hide_init) module_exit(lkm_hide_exit)
+	MODULE_AUTHOR("MikeHorn-git");
 MODULE_DESCRIPTION("lkm_hide");
 MODULE_LICENSE("GPL");
