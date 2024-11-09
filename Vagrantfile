@@ -1,5 +1,3 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
 # frozen_string_literal: true
 
 require 'getoptlong'
@@ -41,10 +39,12 @@ Vagrant.configure('2') do |config|
   config.vm.provision 'shell', inline: <<-SHELL, privileged: false
     # Upgrade Alpine from 3.18 to 3.20
     sudo sed -i -e 's/v3\.18/v3\.20/g' /etc/apk/repositories
-    sudo apk update
-    sudo apk upgrade
+
+    # Add & Upgrade packages
+    sudo apk upgrade -U -a --ignore linux-headers linux-virt
     sudo apk add bison build-base elfutils-dev flex git htop libressl-dev linux-headers neofetch perl strace wget xz
 
+    # Omb
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 
     # Add & enable rsyslog for kernel logs
@@ -60,17 +60,21 @@ Vagrant.configure('2') do |config|
 
   if kernel
     config.vm.provision 'shell', inline: <<-SHELL, privileged: false
+      # Download Kernel
       KERNEL_VERSION="6.11"
       wget --no-verbose https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${KERNEL_VERSION}.tar.xz
       tar -xf linux-${KERNEL_VERSION}.tar.xz
       cd linux-${KERNEL_VERSION}
 
+      # Configure & Install Kernel
       make defconfig
       make
       sudo make modules_install
       sudo make install
 
+      # Create an initramfs with new Kernel
       sudo mkinitfs -o /boot/initramfs 6.11.0/
+
       # Update bootloader
       sudo sed -i -e 's|^  LINUX vmlinuz-virt|  LINUX vmlinuz|' -e 's|^  INITRD initramfs-virt|  INITRD initramfs|' /boot/extlinux.conf
       sudo reboot
