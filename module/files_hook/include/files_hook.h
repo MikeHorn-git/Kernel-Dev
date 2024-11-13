@@ -1,28 +1,22 @@
 #ifndef FILES_HOOK_H
 #define FILES_HOOK_H
 
-#include <linux/kernel.h>
-#include <linux/module.h>
-#include <linux/kprobes.h>
+#include <linux/types.h>  // For __u32, __u64, etc.
 
-/* For each probe you need to allocate a kprobe structure */
-extern struct kprobe kp;
-
-/* Custom linux_dirent structure */
-struct linux_dirent {
-	unsigned long d_ino; // Inode number
-	unsigned long d_off; // Offset to next dirent
-	unsigned short d_reclen; // Length of this record
-	char d_name[]; // Filename (null-terminated)
+/* Define structure for 64-bit linux_dirent64 */
+struct linux_dirent64 {
+    __u64 d_ino;       // Inode number
+    __s64 d_off;       // Offset to the next linux_dirent
+    unsigned short d_reclen;   // Length of this record
+    char d_name[];             // Filename (variable length)
 };
 
-/* Function prototypes */
-int pre_handler(struct kprobe *p, struct pt_regs *regs);
-int hook_getdents(unsigned int fd, struct linux_dirent *dirp,
-		  unsigned int count);
+/* Define structure for 32-bit linux_dirent */
+struct linux_dirent {
+    __u32 d_ino;       // Inode number
+    __s32 d_off;       // Offset to the next linux_dirent
+    unsigned short d_reclen;   // Length of this record
+    char d_name[];             // Filename (variable length)
+};
 
-typedef asmlinkage int (*getdents_t)(unsigned int, struct linux_dirent *,
-				     unsigned int);
-extern getdents_t original_getdents;
-
-#endif // FILES_HOOK_H
+#endif /* FILES_HOOK_H */
