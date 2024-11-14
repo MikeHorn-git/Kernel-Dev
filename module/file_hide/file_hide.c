@@ -36,7 +36,7 @@ static int __kprobes handler_pre(struct kprobe *p, struct pt_regs *regs)
 	return 0;
 }
 
-static int __init files_hook_init(void)
+static int __init file_hide_init(void)
 {
 	int ret;
 	kp.pre_handler = handler_pre;
@@ -50,14 +50,14 @@ static int __init files_hook_init(void)
 	return 0;
 }
 
-static void __exit files_hook_exit(void)
+static void __exit file_hide_exit(void)
 {
 	unregister_kprobe(&kp);
-	pr_info("files_hook exit successfully\n");
+	pr_info("file_hide exit successfully\n");
 }
 
-module_init(files_hook_init)
-module_exit(files_hook_exit)
+module_init(file_hide_init)
+module_exit(file_hide_exit)
 	MODULE_AUTHOR("MikeHorn-git");
-	MODULE_DESCRIPTION("kallsyms_lookup_name");
+	MODULE_DESCRIPTION("file_hide");
 	MODULE_LICENSE("GPL");
