@@ -22,9 +22,8 @@ Targets:
 
 # Module
 
-* files_hook
+* file_hide
 * hello
-* kallsyms_lookup
 * lkm_hide
 
 # SRC
