@@ -25,6 +25,7 @@ Targets:
 * file_hide
 * hello
 * lkm_hide
+* pid_hide
 
 # SRC
 
