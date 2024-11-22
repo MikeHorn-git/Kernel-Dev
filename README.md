@@ -2,7 +2,6 @@
 
 # Requirements
 
-* [Getoptlong](https://github.com/ruby/getoptlong)
 * Vagrant
 * Virtualbox
 
@@ -27,6 +26,7 @@ Targets:
 * lkm_hide
 * pid_hide
 * port_hide
+* revshell_local
 
 # SRC
 

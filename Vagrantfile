@@ -1,22 +1,5 @@
 # frozen_string_literal: true
 
-require 'getoptlong'
-
-opts = GetoptLong.new(
-  ['--kernel', GetoptLong::OPTIONAL_ARGUMENT]
-)
-
-kernel = false
-
-opts.ordering = (GetoptLong::REQUIRE_ORDER)
-
-opts.each do |opt, _arg|
-  case opt
-  when '--kernel'
-    kernel = true
-  end
-end
-
 Vagrant.configure('2') do |config|
   ENV['LC_ALL'] = 'en_US.UTF-8'
   config.vm.box = 'generic/alpine318'
@@ -58,7 +41,7 @@ Vagrant.configure('2') do |config|
     echo "TERM=xterm-256color" >> ~/.bashrc
   SHELL
 
-  if kernel
+  if ENV['VAGRANT_KERNEL'] == 'true'
     config.vm.provision 'shell', inline: <<-SHELL, privileged: false
       # Download Kernel
       KERNEL_VERSION="6.11"
