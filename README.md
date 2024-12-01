@@ -14,12 +14,13 @@ Targets:
   build        Deploy VM and build kernel with defconfig
   convert      Convert Kernel VM to QCOW2 format
   deploy       Deploy VM with utils
+  format       Format all .c, .h files with clang-format
   clean        Clean up VM images
   prune        Destroy Vagrant VM
   distclean    Execute clean and prune command
 ```
 
-# Module
+# Modules list
 
 * file_hide
 * hello
@@ -27,9 +28,3 @@ Targets:
 * pid_hide
 * port_hide
 * revshell_local
-
-# SRC
-
-* Modified files from kernel source tree
-* Custom syscall created
-* Userland call in test/

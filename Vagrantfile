@@ -11,7 +11,7 @@ Vagrant.configure('2') do |config|
                               destination: '/home/vagrant/module'
 
   config.vm.provider 'virtualbox' do |vb|
-    vb.memory = '4096'
+    vb.memory = '2048'
     vb.cpus = 4
     vb.name = 'Kernel'
     vb.gui = false
@@ -51,7 +51,7 @@ Vagrant.configure('2') do |config|
 
       # Configure & Install Kernel
       make defconfig
-      make
+      make -j4
       sudo make modules_install
       sudo make install
 
