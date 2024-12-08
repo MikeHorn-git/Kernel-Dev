@@ -22,7 +22,7 @@ help:
 
 build:
 	@command -v vagrant >/dev/null 2>&1 || { echo "Vagrant is not installed."; exit 1; }
-	@vagrant --kernel up || { echo "Failed to deploy with Vagrant."; exit 1; }
+	@export VAGRANT_KERNEL=true && vagrant up || { echo "Failed to deploy with Vagrant."; exit 1; }
 
 convert:
 	VBoxManage export $(VM_NAME) -o $(OVA_FILE) --ovf10
