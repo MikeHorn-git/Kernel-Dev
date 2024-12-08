@@ -21,7 +21,7 @@ Vagrant.configure('2') do |config|
 
   config.vm.provision 'shell', inline: <<-SHELL, privileged: false
     # Upgrade Alpine from 3.18 to 3.20
-    sudo sed -i -e 's/v3\.18/v3\.20/g' /etc/apk/repositories
+    sudo sed -i -e 's/v3\.18/v3\.21/g' /etc/apk/repositories
 
     # Add & Upgrade packages
     sudo apk upgrade -U -a --ignore linux-headers linux-virt
