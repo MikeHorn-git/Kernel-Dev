@@ -63,4 +63,17 @@ Vagrant.configure('2') do |config|
       sudo reboot
     SHELL
   end
+
+  if ENV['VAGRANT_IDE'] == 'true'
+    config.vm.provision 'shell', inline: <<-SHELL, privileged: false
+      # Add neovim with custom dotfiles
+      sudo apk add neovim
+
+      git clone https://github.com/MikeHorn-git/dotfiles
+      cd dotfiles
+      make nvim
+
+      echo "alias vim=nvim" >> ~/.bashrc
+    SHELL
+  end
 end
