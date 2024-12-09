@@ -29,7 +29,6 @@ static int __kprobes handler_pre(struct kprobe *p, struct pt_regs *regs)
 	char *filename = (char *)regs->si;
 	pid_t pid = current->pid;
 	char path[256];
-
 	dbg_print(
 		"<%s> p->addr = 0x%p, ip = %lx, rdi=%lx, rsi=%s ,flags = 0x%lx\n",
 		p->symbol_name, p->addr, regs->ip, regs->di, (char *)regs->si,

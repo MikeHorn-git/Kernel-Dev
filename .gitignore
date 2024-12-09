@@ -23,3 +23,5 @@ Module.symvers
 *.mod.c
 *.mod.o
 .*.o.d
+
+*.img

