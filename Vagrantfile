@@ -10,6 +10,8 @@ Vagrant.configure('2') do |config|
   config.vm.provision 'file', source: './module',
                               destination: '/home/vagrant/module'
 
+  config.vm.network 'private_network', ip: '192.168.56.26'
+
   config.vm.provider 'virtualbox' do |vb|
     vb.memory = '2048'
     vb.cpus = 4
@@ -20,25 +22,12 @@ Vagrant.configure('2') do |config|
   end
 
   config.vm.provision 'shell', inline: <<-SHELL, privileged: false
-    # Upgrade Alpine from 3.18 to 3.20
+    # Upgrade Alpine from 3.18 to 3.21
     sudo sed -i -e 's/v3\.18/v3\.21/g' /etc/apk/repositories
 
     # Add & Upgrade packages
     sudo apk upgrade -U -a --ignore linux-headers linux-virt
     sudo apk add bison build-base elfutils-dev flex git htop libressl-dev linux-headers neofetch perl strace wget xz
-
-    # Omb
-    bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
-
-    # Add & enable rsyslog for kernel logs
-    sudo service rsyslog start
-    sudo rc-update add rsyslog default
-
-    ## Bashrc tweaks ##
-    # Set CTRL+L to clear
-    echo 'bind -x '"'"'"\C-l":clear'"'"'' >> ~/.bashrc
-    # Avoid 'xterm-kitty': unknown terminal type
-    echo "TERM=xterm-256color" >> ~/.bashrc
   SHELL
 
   if ENV['VAGRANT_KERNEL'] == 'true'
@@ -61,6 +50,31 @@ Vagrant.configure('2') do |config|
       # Update bootloader
       sudo sed -i -e 's|^  LINUX vmlinuz-virt|  LINUX vmlinuz|' -e 's|^  INITRD initramfs-virt|  INITRD initramfs|' /boot/extlinux.conf
       sudo reboot
+    SHELL
+  end
+
+  if ENV['VAGRANT_CUSTOM'] == 'true'
+    config.vm.provision 'shell', inline: <<-SHELL, privileged: false
+    # Clang-format
+    sudo apk add clang19-extra-tools
+
+    # Checkpatch.pl
+    wget https://raw.githubusercontent.com/torvalds/linux/refs/heads/master/scripts/checkpatch.pl
+    chmod +x ./checkpatch.pl
+
+    # Omb
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+
+    # Add & enable rsyslog for kernel logs
+    sudo service rsyslog start
+    sudo rc-update add rsyslog default
+
+    ## Bashrc tweaks ##
+    # Set CTRL+L to clear
+    echo 'bind -x '"'"'"\C-l":clear'"'"'' >> ~/.bashrc
+    # Avoid 'xterm-kitty': unknown terminal type
+    echo "TERM=xterm-256color" >> ~/.bashrc
+
     SHELL
   end
 
