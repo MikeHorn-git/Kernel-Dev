@@ -20,11 +20,12 @@ Targets:
   distclean    Execute clean and prune command
 ```
 
-# Modules list
+# Modules
 
 * file_hide
 * hello
 * lkm_hide
+* persistence
 * pid_hide
 * port_hide
-* revshell_local
+* revshell
