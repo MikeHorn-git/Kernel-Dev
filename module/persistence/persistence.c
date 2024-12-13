@@ -19,6 +19,15 @@ static int persistence(void)
 	loff_t pos = 0; // File offset
 	ssize_t written;
 
+	// Check file exist
+	file = filp_open(path, O_RDONLY, 0);
+	if (!IS_ERR(file)) {
+		dbg_print("modules.conf already exists");
+		filp_close(file, NULL);
+		kfree(data);
+		return -1;
+	}
+
 	// Create or Open the file
 	dbg_print("Open file");
 	file = filp_open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
