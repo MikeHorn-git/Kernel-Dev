@@ -1,7 +1,5 @@
-obj-m += main.o
-
-KDIR := /home/prince2lu/Desktop/cours/rootkit/Kernel-Dev/linux-6.11
-# PWD := /home/prince2lu/Desktop/cours/rootkit/Kernel-Dev/module/file_hide
+obj-m = main.o
+KDIR := ../../linux-6.11
 EXTRA_CFLAGS += -DDEBUG
 
 all:
