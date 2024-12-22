@@ -12,6 +12,9 @@ Vagrant.configure('2') do |config|
 
   config.vm.network 'private_network', ip: '192.168.56.26'
 
+  # 16,67 mins
+  config.vm.boot_timeout = 1000
+
   config.vm.provider 'virtualbox' do |vb|
     vb.memory = '2048'
     vb.cpus = 4
@@ -27,7 +30,7 @@ Vagrant.configure('2') do |config|
 
     # Add & Upgrade packages
     sudo apk upgrade -U -a --ignore linux-headers linux-virt
-    sudo apk add bison build-base elfutils-dev flex git htop libressl-dev linux-headers neofetch perl strace wget xz
+    sudo apk add bison build-base elfutils-dev flex git htop libressl-dev linux-headers perl strace wget xz
   SHELL
 
   if ENV['VAGRANT_KERNEL'] == 'true'
@@ -66,6 +69,7 @@ Vagrant.configure('2') do |config|
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 
     # Add & enable rsyslog for kernel logs
+    sudo apk add rsyslog
     sudo service rsyslog start
     sudo rc-update add rsyslog default
 
@@ -82,6 +86,7 @@ Vagrant.configure('2') do |config|
     config.vm.provision 'shell', inline: <<-SHELL, privileged: false
       # Add neovim with custom dotfiles
       sudo apk add neovim
+      mkdir ~/.config
 
       git clone https://github.com/MikeHorn-git/dotfiles
       cd dotfiles
