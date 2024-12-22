@@ -12,26 +12,34 @@ help:
 	@echo "Usage: make <target>"
 	@echo "Targets:"
 	@echo "  help         Display this help message"
+	@echo "  base         Deploy base VM"
 	@echo "  build        Deploy VM and build kernel with defconfig"
+	@echo "  custom       Deploy VM with dotfiles and miscs tools"
+	@echo "  all          Execute base, build and custom command"
 	@echo "  convert      Convert $(VM_NAME) VM to QCOW2 format"
-	@echo "  deploy       Deploy VM with utils"
 	@echo "  format       Format all .c, .h files with clang-format"
 	@echo "  clean        Clean up VM images"
 	@echo "  prune        Destroy Vagrant VM"
 	@echo "  distclean    Execute clean and prune command"
 
+base:
+	@vagrant up
+	@vagrant halt
+
 build:
-	@command -v vagrant >/dev/null 2>&1 || { echo "Vagrant is not installed."; exit 1; }
-	@export VAGRANT_KERNEL=true && vagrant up || { echo "Failed to deploy with Vagrant."; exit 1; }
+	@export VAGRANT_KERNEL=true && vagrant up --provision
+	@vagrant halt
+
+custom:
+	@export VAGRANT_CUSTOM=true && VAGRANT_IDE=true && vagrant up --provision
+	@vagrant halt
+
+all: base build custom
 
 convert:
 	VBoxManage export $(VM_NAME) -o $(OVA_FILE) --ovf10
 	tar -xvf $(OVA_FILE)
 	qemu-img convert -f vmdk -O qcow2 $(OVA_FILE) $(QCOW2_IMG) || { echo "Failed to convert image."; exit 1; }
-
-deploy:
-	@command -v vagrant >/dev/null 2>&1 || { echo "Vagrant is not installed."; exit 1; }
-	@vagrant up || { echo "Failed to deploy with Vagrant."; exit 1; }
 
 format:
 	git ls-files $(FILES) | xargs $(FORMAT) -i
@@ -45,4 +53,4 @@ prune:
 
 distclean: clean prune
 
-.PHONY: help build convert deploy format clean prune distclean
+.PHONY: help base build custom all convert format clean prune distclean
