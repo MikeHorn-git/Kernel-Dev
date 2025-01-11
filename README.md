@@ -108,8 +108,6 @@ Use ```make ide``` or export `VAGRANT_IDE=true` in env:
 
 ---
 
-Export the `ENV` variables as needed before running `vagrant up`. Or use the provided [Makefile](https://github.com/MikeHorn-git/Kernel-Dev#makefile).
-
 # Src
 
 In-tree dev.  
@@ -127,7 +125,7 @@ Out-of-tree dev.
 Rootkit samples.
 
 > [!Important]
-> This samples is for educational and research purposes only
+> These samples are for educational and research purposes only.
 
 * Kprobe-based hide LKM
 * Openrc persistence
