@@ -25,7 +25,11 @@ make build
 
 ## Virtualbox
 
+The Vagrantfile use libvirt provider by default.
+Remove ```ENV['VAGRANT_DEFAULT_PROVIDER'] = 'libvirt'```
+
 ```bash
+sed -i "/ENV\['VAGRANT_DEFAULT_PROVIDER'\] = 'libvirt'/d" Vagrantfile
 make build
 ```
 
