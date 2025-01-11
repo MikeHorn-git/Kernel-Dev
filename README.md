@@ -2,11 +2,8 @@
 
 # Description
 
-My [Linux Kernel](https://en.wikipedia.org/wiki/Loadable_kernel_module) developer environments.
-
-# Content
-
-Use Vagrant with Libvirt (QEMU) and VirtualBox providers and Alpine image.
+My [Linux Kernel](https://en.wikipedia.org/wiki/Loadable_kernel_module) developer environments.  
+Use Vagrant with Libvirt (QEMU) and VirtualBox providers and Alpine image.  
 Include [in-tree](https://github.com/MikeHorn-git/Kernel-Dev#src) and [out-of-tree](https://github.com/MikeHorn-git/Kernel-Dev#module) code.
 
 # Requirements
@@ -63,7 +60,7 @@ clean        Clean up VM images
 
 # Src
 
-In-tree dev.
+In-tree dev.  
 Custom syscalls.
 
 ## Features
@@ -74,7 +71,7 @@ Custom syscalls.
 
 # Module
 
-Out-of-tree dev.
+Out-of-tree dev.  
 Rootkit samples.
 
 > [!Important]
