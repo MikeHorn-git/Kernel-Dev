@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'libvirt'
+
 Vagrant.configure('2') do |config|
   ENV['LC_ALL'] = 'en_US.UTF-8'
   config.vm.box = 'generic/alpine318'
@@ -10,10 +12,19 @@ Vagrant.configure('2') do |config|
   config.vm.provision 'file', source: './module',
                               destination: '/home/vagrant/module'
 
-  config.vm.network 'private_network', ip: '192.168.56.26'
+  config.vm.network "private_network", type: "dhcp"
 
   # 16,67 mins
   config.vm.boot_timeout = 1000
+
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.memory = '2048'
+    libvirt.cpus = 4
+    libvirt.default_prefix = 'Kernel'
+    libvirt.storage_pool_name = 'default'
+    libvirt.qemu_use_session = false
+    libvirt.keymap = 'en-us'
+  end
 
   config.vm.provider 'virtualbox' do |vb|
     vb.memory = '2048'
