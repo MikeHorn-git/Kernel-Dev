@@ -2,13 +2,27 @@
 
 # Description
 
-A [Loadable Kernel Module](https://en.wikipedia.org/wiki/Loadable_kernel_module) (LKM) programming environment that utilizes Vagrant with support for Libvirt (QEMU) and VirtualBox.
-Includes sample LKMs designed with a focus on rootkit functionality.
+My [Linux Kernel](https://en.wikipedia.org/wiki/Loadable_kernel_module) developer environments.
+
+# Content
+
+Use Vagrant with Libvirt (QEMU) and VirtualBox providers and Alpine image.
+Include [in-tree](https://github.com/MikeHorn-git/Kernel-Dev#src) and [out-of-tree](https://github.com/MikeHorn-git/Kernel-Dev#module) code.
 
 # Requirements
 
-* Provider (Libvirt or Virtualbox)
-* Vagrant
+## Libvirt
+
+```bash
+export VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1
+vagrant plugin install vagrant-libvirt
+```
+
+## Virtualbox
+
+Supported by default
+
+---
 
 # Build
 
@@ -47,16 +61,28 @@ format       Format all .c, .h files with clang-format
 clean        Clean up VM images
 ```
 
-# Module
+# Src
+
+In-tree dev.
+Custom syscalls.
 
 ## Features
 
+* hello syscall
+* [jiffy](https://en.wikipedia.org/wiki/Jiffy_(time)#Computing) syscall
+* Userland test
+
+# Module
+
+Out-of-tree dev.
+Rootkit samples.
+
 > [!Important]
-> This repository is for educational and research purposes only
+> This samples is for educational and research purposes only
 
 * Kprobe-based hide LKM
-* Basic openrc persistence
-* Basic local revshell
+* Openrc persistence
+* Local revshell
 
 ## List
 

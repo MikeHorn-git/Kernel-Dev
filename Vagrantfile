@@ -7,16 +7,16 @@ Vagrant.configure('2') do |config|
   config.vm.box = 'generic/alpine318'
   config.vm.box_version = '4.3.12'
 
-  config.vm.hostname = 'host'
-  config.vm.synced_folder '.', '/vagrant', disabled: true
-  config.vm.provision 'file', source: './module',
-                              destination: '/home/vagrant/module'
-
-  config.vm.network "private_network", type: "dhcp"
-
   # 16,67 mins
   config.vm.boot_timeout = 1000
+  config.vm.hostname = 'host'
+  config.vm.network "private_network", type: "dhcp"
 
+
+  config.vm.synced_folder '.', '/vagrant', disabled: true
+  config.vm.synced_folder './module', '/home/vagrant/module', type: "rsync"
+  config.vm.synced_folder './src', '/home/vagrant/src', type: "rsync"
+  
   config.vm.provider :libvirt do |libvirt|
     libvirt.memory = '2048'
     libvirt.cpus = 4
