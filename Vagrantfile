@@ -42,6 +42,14 @@ Vagrant.configure('2') do |config|
     # Add & Upgrade packages
     sudo apk upgrade -U -a --ignore linux-headers linux-virt
     sudo apk add bison build-base elfutils-dev flex git htop libressl-dev linux-headers perl strace wget xz
+    
+    ## Bashrc tweaks ##
+    # Set CTRL+L to clear
+    echo 'bind -x "\"\C-l\":clear"' >> ~/.bashrc
+    # Avoid 'xterm-kitty': unknown terminal type
+    echo "TERM=xterm-256color" >> ~/.bashrc
+
+    sudo reboot
   SHELL
 
   if ENV['VAGRANT_KERNEL'] == 'true'
@@ -54,7 +62,7 @@ Vagrant.configure('2') do |config|
 
       # Configure & Install Kernel
       make defconfig
-      make -j4
+      make -j$(nproc)
       sudo make modules_install
       sudo make install
 
@@ -69,27 +77,20 @@ Vagrant.configure('2') do |config|
 
   if ENV['VAGRANT_CUSTOM'] == 'true'
     config.vm.provision 'shell', inline: <<-SHELL, privileged: false
-    # Clang-format
-    sudo apk add clang19-extra-tools
+      # Clang-format
+      sudo apk add clang19-extra-tools
 
-    # Checkpatch.pl
-    wget https://raw.githubusercontent.com/torvalds/linux/refs/heads/master/scripts/checkpatch.pl
-    chmod +x ./checkpatch.pl
+      # Checkpatch.pl
+      wget https://raw.githubusercontent.com/torvalds/linux/refs/heads/master/scripts/checkpatch.pl
+      chmod +x ./checkpatch.pl
 
-    # Omb
-    bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+      # Omb
+      bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 
-    # Add & enable rsyslog for kernel logs
-    sudo apk add rsyslog
-    sudo service rsyslog start
-    sudo rc-update add rsyslog default
-
-    ## Bashrc tweaks ##
-    # Set CTRL+L to clear
-    echo 'bind -x '"'"'"\C-l":clear'"'"'' >> ~/.bashrc
-    # Avoid 'xterm-kitty': unknown terminal type
-    echo "TERM=xterm-256color" >> ~/.bashrc
-
+      # Add & enable rsyslog for kernel logs
+      sudo apk add rsyslog
+      sudo service rsyslog start
+      sudo rc-update add rsyslog default
     SHELL
   end
 
