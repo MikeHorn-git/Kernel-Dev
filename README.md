@@ -9,6 +9,10 @@ Include [in-tree](https://github.com/MikeHorn-git/Kernel-Dev#src) and [out-of-tr
 
 # Requirements
 
+```bash
+vagrant plugin install vagrant-reload
+```
+
 ## Libvirt
 
 ```bash

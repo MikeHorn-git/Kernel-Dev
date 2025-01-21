@@ -15,7 +15,7 @@ Vagrant.configure('2') do |config|
 
   config.vm.synced_folder '.', '/vagrant', disabled: true
   config.vm.synced_folder './module', '/home/vagrant/module', type: "rsync"
-  config.vm.synced_folder './src', '/home/vagrant/src', type: "rsync"
+  # config.vm.synced_folder './src', '/home/vagrant/src', type: "rsync"
   
   config.vm.provider :libvirt do |libvirt|
     libvirt.memory = '2048'
@@ -48,9 +48,9 @@ Vagrant.configure('2') do |config|
     echo 'bind -x "\"\C-l\":clear"' >> ~/.bashrc
     # Avoid 'xterm-kitty': unknown terminal type
     echo "TERM=xterm-256color" >> ~/.bashrc
-
-    sudo reboot
   SHELL
+
+  config.vm.provision :reload
 
   if ENV['VAGRANT_KERNEL'] == 'true'
     config.vm.provision 'shell', inline: <<-SHELL, privileged: false
@@ -73,6 +73,8 @@ Vagrant.configure('2') do |config|
       sudo sed -i -e 's|^  LINUX vmlinuz-virt|  LINUX vmlinuz|' -e 's|^  INITRD initramfs-virt|  INITRD initramfs|' /boot/extlinux.conf
       sudo reboot
     SHELL
+
+    config.vm.provision :reload
   end
 
   if ENV['VAGRANT_CUSTOM'] == 'true'
@@ -92,6 +94,8 @@ Vagrant.configure('2') do |config|
       sudo service rsyslog start
       sudo rc-update add rsyslog default
     SHELL
+
+    config.vm.provision :reload
   end
 
   if ENV['VAGRANT_IDE'] == 'true'
@@ -106,5 +110,7 @@ Vagrant.configure('2') do |config|
 
       echo "alias vim=nvim" >> ~/.bashrc
     SHELL
+
+    config.vm.provision :reload
   end
 end
