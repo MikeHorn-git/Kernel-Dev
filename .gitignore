@@ -1,0 +1,25 @@
+# Kernel source
+linux-*.*
+
+# Disk images
+kernel.ov
+kernel.qcow2
+
+# Vagrant
+.vagrant
+
+# Kernel module objects
+.*.mod.cmd
+.*.o.cmd
+.modules.order.cmd
+*.mod
+*.o
+modules.order
+.Module.symvers.cmd
+.*.ko.cmd
+.*.mod.o.cmd
+Module.symvers
+*.ko
+*.mod.c
+*.mod.o
+.*.o.d
