@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-ENV['VAGRANT_DEFAULT_PROVIDER'] = 'libvirt'
-
 Vagrant.configure('2') do |config|
   ENV['LC_ALL'] = 'en_US.UTF-8'
   config.vm.box = 'generic/alpine318'
@@ -14,7 +12,6 @@ Vagrant.configure('2') do |config|
 
   config.vm.synced_folder '.', '/vagrant', disabled: true
   config.vm.synced_folder '../../module', '/home/vagrant/module', type: "rsync"
-  # config.vm.synced_folder '../../src', '/home/vagrant/src', type: "rsync"
   
   config.vm.provider :libvirt do |libvirt|
     libvirt.memory = '2048'
@@ -43,9 +40,7 @@ Vagrant.configure('2') do |config|
     sudo apk add bison build-base elfutils-dev flex git htop libressl-dev linux-headers perl strace wget xz
     
     ## Bashrc tweaks ##
-    # Set CTRL+L to clear
     echo 'bind -x "\"\C-l\":clear"' >> ~/.bashrc
-    # Avoid 'xterm-kitty': unknown terminal type
     echo "TERM=xterm-256color" >> ~/.bashrc
   SHELL
 
@@ -78,7 +73,6 @@ Vagrant.configure('2') do |config|
 
   if ENV['VAGRANT_CUSTOM'] == 'true'
     config.vm.provision 'shell', inline: <<-SHELL, privileged: false
-      # Omb
       bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 
       # Add & enable rsyslog for kernel logs
