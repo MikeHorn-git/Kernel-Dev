@@ -1,6 +1,6 @@
 import socket
 
-host = '0.0.0.0'
+host = "0.0.0.0"
 port = 2600
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -13,18 +13,18 @@ VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 vagrant plugin install vagrant-r
 
 ## Images
 
-* Alpine
-* Arch
-* Debian
-* Gentoo
-* Ubuntu
+- Alpine
+- Arch
+- Debian
+- Gentoo
+- Ubuntu
 
 ## Providers
 
-* Libvirt
-* Virtualbox
+- Libvirt
+- Virtualbox
 
----
+______________________________________________________________________
 
 ## Build
 
@@ -50,55 +50,55 @@ Targets:
 
 ### Default
 
-* Update & Upgrade distros
-* Mandatory kernel-build packages
-* System tweaks:
-   * `CTRL+L` clears the terminal.
-   * Sets `TERM=xterm-256color` to prevent terminal type errors.
+- Update & Upgrade distros
+- Mandatory kernel-build packages
+- System tweaks:
+  - `CTRL+L` clears the terminal.
+  - Sets `TERM=xterm-256color` to prevent terminal type errors.
 
 ### VAGRANT_KERNEL
 
-Use ```make build``` or export `VAGRANT_KERNEL=true` in env:
+Use `make build` or export `VAGRANT_KERNEL=true` in env:
 
-* Kernel Download: Linux kernel version `6.11`.
-* Kernel Compilation and Installation:
-   * Extracts and compiles the kernel.
-   * Installs kernel modules and the kernel itself.
-* Initramfs Creation
-* Bootloader Update
+- Kernel Download: Linux kernel version `6.11`.
+- Kernel Compilation and Installation:
+  - Extracts and compiles the kernel.
+  - Installs kernel modules and the kernel itself.
+- Initramfs Creation
+- Bootloader Update
 
 ### VAGRANT_CUSTOM
 
-Use ```make custom``` or export `VAGRANT_CUSTOM=true` in env:
+Use `make custom` or export `VAGRANT_CUSTOM=true` in env:
 
-* Oh-My-Bash (OMB): Installs Oh-My-Bash.
-* Rsyslog:
-   * Installs `rsyslog`.
-   * Starts the service and enables it at boot.
+- Oh-My-Bash (OMB): Installs Oh-My-Bash.
+- Rsyslog:
+  - Installs `rsyslog`.
+  - Starts the service and enables it at boot.
 
----
+______________________________________________________________________
 
 ## Src
 
-* hello syscall
-* [jiffy](https://en.wikipedia.org/wiki/Jiffy_(time)#Computing) syscall
-* Userland test
+- hello syscall
+- [jiffy](<https://en.wikipedia.org/wiki/Jiffy_(time)#Computing>) syscall
+- Userland test
 
 ## Module
 
 > [!Important]
 > These samples are for educational and research purposes only.
 
-* Kprobe-based hide LKM
-* Openrc persistence
-* Local revshell
+- Kprobe-based hide LKM
+- Openrc persistence
+- Local revshell
 
 ### List
 
-* file_hide
-* hello
-* lkm_hide
-* persistence
-* pid_hide
-* port_hide
-* revshell
+- file_hide
+- hello
+- lkm_hide
+- persistence
+- pid_hide
+- port_hide
+- revshell
