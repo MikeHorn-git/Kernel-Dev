@@ -44,7 +44,6 @@ Targets:
   build        Deploy VM and build kernel with defconfig
   custom       Deploy VM miscs tools
   all          Execute base, build and custom command
-  format       Format all .c, .h files with clang-format
 ```
 
 ## Vagrant Provisionning

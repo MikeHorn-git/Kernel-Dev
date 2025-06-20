@@ -14,7 +14,6 @@ help:
 	@echo "  build        Deploy VM and build kernel with defconfig for specified image"
 	@echo "  custom       Deploy VM with misc tools for specified image"
 	@echo "  all          Execute base, build, and custom for specified image"
-	@echo "  format       Clang-format & Rubocop"
 	@echo "Example:"
 	@echo "  make build IMAGE=arch"
 
@@ -35,8 +34,4 @@ custom:
 
 all: base build custom
 
-format:
-	@git ls-files $(FILES) | xargs clang-format -i
-	@find . -name "Vagrantfile" | xargs rubocop -A
-
-.PHONY: help base build custom all format
+.PHONY: help base build custom all
